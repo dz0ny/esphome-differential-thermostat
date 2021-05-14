@@ -14,3 +14,4 @@ Hardware:
 - TTGO T-Display
 - Relay Shield
 - Rotary Encoder
+- Power Source
