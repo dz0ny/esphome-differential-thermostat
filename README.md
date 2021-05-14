@@ -9,3 +9,8 @@ Features:
 - One can set hysteresis to offset the sensor and to protect the pump (rapid on/off).
 - If the target temperature is higher that source turn the pump off (to prevent reverse heating).
 - All values can be set on screen using rotary encoder and a integrated button.
+
+Hardware:
+- TTGO T-Display
+- Relay Shield
+- Rotary Encoder
