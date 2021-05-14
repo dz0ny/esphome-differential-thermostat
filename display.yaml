@@ -1,0 +1,189 @@
+spi:
+  clk_pin: GPIO18
+  mosi_pin: GPIO19
+
+color:
+  - id: my_red
+    red: 100%
+    green: 0%
+    blue: 0%
+  - id: my_yellow
+    red: 100%
+    green: 100%
+    blue: 0%
+  - id: my_green
+    red: 0%
+    green: 100%
+    blue: 0%
+  - id: my_blue
+    red: 0%
+    green: 0%
+    blue: 100%
+  - id: my_gray
+    red: 50%
+    green: 50%
+    blue: 50%
+  
+font:
+  - file: "Roboto-Medium.ttf"
+    id: tahoma_48
+    size: 48
+  - file: "Roboto-Medium.ttf"
+    id: tahoma_24
+    size: 24
+
+display:
+  - platform: st7789v
+    id: "tft"
+    backlight_pin: GPIO4
+    cs_pin: GPIO5
+    dc_pin: GPIO16
+    reset_pin: GPIO23
+    rotation: 90
+    brightness: 0.5
+    update_interval: 0.5s
+    pages:
+      - id: ura_tft
+        lambda: |-
+          id(on_pec) = false;
+          id(on_bojler) = false;
+          id(on_histereza) = false;
+          it.rectangle(0,  0, it.get_width(), it.get_height(), id(my_blue));
+          it.rectangle(0, 40, it.get_width(), it.get_height(), id(my_blue));   // header bar
+
+          it.strftime((240 / 2), (140 / 3) * 1 + 10, id(tahoma_24), id(my_gray), TextAlign::CENTER, "%Y-%m-%d", id(esptime).now());
+          it.strftime((240 / 2), (140 / 3) * 2 + 10, id(tahoma_48), id(my_gray), TextAlign::CENTER, "%H:%M:%S", id(esptime).now());
+          it.print(5, 5, id(tahoma_24), id(my_yellow), TextAlign::TOP_LEFT, "Ura");
+
+          if (id(system_status).state) {
+            it.print(235, 5, id(tahoma_24), id(my_green), TextAlign::TOP_RIGHT, "Online");
+          }
+          else {
+            it.print(235, 5, id(tahoma_24), id(my_red), TextAlign::TOP_RIGHT, "Offline");
+          }
+      - id: ops_tft
+        lambda: |-
+          id(on_pec) = false;
+          id(on_bojler) = false;
+          id(on_histereza) = false;
+          if (!id(pumpa).state){
+            it.rectangle(0,  0, it.get_width(), it.get_height(), id(my_red));
+            it.rectangle(0, 40, it.get_width(), it.get_height(), id(my_red));   // header bar
+            if(id(stanje) == 1){
+              it.printf((240 / 2), (150 / 2), id(tahoma_48), id(my_gray),TextAlign::CENTER, "Pec - %d", id(temperatura_pec));
+            }
+            if(id(stanje) == 2){
+              it.print((240 / 2), (150 / 2), id(tahoma_48), id(my_gray),TextAlign::CENTER, "Pec - Bojler");
+            }
+            if(id(stanje) == 3){
+              it.printf((240 / 2), (150 / 2), id(tahoma_48), id(my_gray),TextAlign::CENTER, "Bojler + %d", id(temperatura_bojler));
+            }
+            if(id(stanje) == 666){
+              it.print((240 / 2), (150 / 2), id(tahoma_48), id(my_gray),TextAlign::CENTER, "Pec +90");
+            }
+          }else{
+            it.rectangle(0,  0, it.get_width(), it.get_height(), id(my_green));
+            it.rectangle(0, 40, it.get_width(), it.get_height(), id(my_green));   // header bar
+            it.printf((240 / 2), (150 / 2), id(tahoma_48), id(my_gray),TextAlign::CENTER, "%s", id(pumpa).state ? "ON" : "OFF");
+          }
+          
+          it.print(5, 5, id(tahoma_24), id(my_yellow), TextAlign::TOP_LEFT, "Stanje");
+
+          if (id(system_status).state) {
+            it.print(235, 5, id(tahoma_24), id(my_green), TextAlign::TOP_RIGHT, "Online");
+          }
+          else {
+            it.print(235, 5, id(tahoma_24), id(my_red), TextAlign::TOP_RIGHT, "Offline");
+          }
+      - id: bojler_tft
+        lambda: |-
+          id(on_pec) = false;
+          id(on_bojler) = true;
+          id(on_histereza) = false;
+          if (id(nastavi_bojler)) {
+            it.rectangle(0,  0, it.get_width(), it.get_height(), id(my_red));
+            it.rectangle(0, 40, it.get_width(), it.get_height(), id(my_red));   // header bar
+          } else {
+            it.rectangle(0,  0, it.get_width(), it.get_height(), id(my_blue));
+            it.rectangle(0, 40, it.get_width(), it.get_height(), id(my_blue));   // header bar
+          }
+
+          if (!id(nastavi_bojler)) {
+            it.printf((240 / 2), (150 / 2), id(tahoma_48), id(my_gray), TextAlign::CENTER, "%.1f°C", id(tbojler).get_temp_c());
+          } else {
+            it.printf((240 / 2), (150 / 2), id(tahoma_48), id(my_gray), TextAlign::CENTER, "%d°C", id(temperatura_bojler));
+          }
+
+          it.print(5, 5, id(tahoma_24), id(my_yellow), TextAlign::TOP_LEFT, "Bojler");
+
+          if (id(system_status).state) {
+            it.print(235, 5, id(tahoma_24), id(my_green), TextAlign::TOP_RIGHT, "Online");
+          }
+          else {
+            it.print(235, 5, id(tahoma_24), id(my_red), TextAlign::TOP_RIGHT, "Offline");
+          }
+      - id: pec_tft
+        lambda: |-
+          id(on_pec) = true;
+          id(on_bojler) = false;
+          id(on_histereza) = false;
+          if (id(nastavi_pec)) {
+            it.rectangle(0,  0, it.get_width(), it.get_height(), id(my_red));
+            it.rectangle(0, 40, it.get_width(), it.get_height(), id(my_red));   // header bar
+          } else {
+            it.rectangle(0,  0, it.get_width(), it.get_height(), id(my_blue));
+            it.rectangle(0, 40, it.get_width(), it.get_height(), id(my_blue));   // header bar
+          }
+          if (!id(nastavi_pec)) {
+            it.printf((240 / 2), (150 / 2), id(tahoma_48), id(my_gray), TextAlign::CENTER, "%.1f°C", id(tpec).get_temp_c());
+          } else {
+            it.printf((240 / 2), (150 / 2), id(tahoma_48), id(my_gray), TextAlign::CENTER, "%d°C", id(temperatura_pec));
+          }
+          it.print(5, 5, id(tahoma_24), id(my_yellow), TextAlign::TOP_LEFT, "Pec");
+
+          if (id(system_status).state) {
+            it.print(235, 5, id(tahoma_24), id(my_green), TextAlign::TOP_RIGHT, "Online");
+          }
+          else {
+            it.print(235, 5, id(tahoma_24), id(my_red), TextAlign::TOP_RIGHT, "Offline");
+          }
+      - id: histereza_tft
+        lambda: |-
+          id(on_pec) = false;
+          id(on_bojler) = false;
+          id(on_histereza) = true;
+          if (id(nastavi_histereza)) {
+            it.rectangle(0,  0, it.get_width(), it.get_height(), id(my_red));
+            it.rectangle(0, 40, it.get_width(), it.get_height(), id(my_red));   // header bar
+          } else {
+            it.rectangle(0,  0, it.get_width(), it.get_height(), id(my_blue));
+            it.rectangle(0, 40, it.get_width(), it.get_height(), id(my_blue));   // header bar
+          }
+
+          it.printf((240 / 2), (150 / 2), id(tahoma_48), id(my_gray), TextAlign::CENTER, "%f.1", id(histereza));
+          it.print(5, 5, id(tahoma_24), id(my_yellow), TextAlign::TOP_LEFT, "Histereza");
+
+          if (id(system_status).state) {
+            it.print(235, 5, id(tahoma_24), id(my_green), TextAlign::TOP_RIGHT, "Online");
+          }
+          else {
+            it.print(235, 5, id(tahoma_24), id(my_red), TextAlign::TOP_RIGHT, "Offline");
+          }
+      - id: wifi_tft
+        lambda: |-
+          id(on_pec) = false;
+          id(on_bojler) = false;
+          id(on_histereza) = false;
+          it.rectangle(0,  0, it.get_width(), it.get_height(), id(my_blue));
+          it.rectangle(0, 40, it.get_width(), it.get_height(), id(my_blue));   // header bar
+          it.print(5, 5, id(tahoma_24), id(my_yellow), TextAlign::TOP_LEFT, "WIFI");
+
+          if (id(system_status).state) {
+            it.print(235, 5, id(tahoma_24), id(my_green), TextAlign::TOP_RIGHT, "Online");
+          }
+          else {
+            it.print(235, 5, id(tahoma_24), id(my_red), TextAlign::TOP_RIGHT, "Offline");
+          }
+          it.printf((240 / 2), (140 / 3) * 1+20, id(tahoma_24), id(my_gray), TextAlign::CENTER, "WIFI: %.fdB", id(wifirssi).state);
+          it.printf((240 / 2), (140 / 3) * 2-5, id(tahoma_24), id(my_gray), TextAlign::CENTER, "%s", id(ipaddr).state.c_str());
+          it.printf((240 / 2), (140 / 3) * 2+20, id(tahoma_24), id(my_gray), TextAlign::CENTER, "AP: %s", id(wifissid).state.c_str());

@@ -1,0 +1,93 @@
+
+logger:
+  level: INFO
+
+wifi:
+  networks:
+    - ssid: dz0ny
+      password: !secret ssid_pw_dz0ny
+    - ssid: Toni
+      password: !secret ssid_pw_toni
+  ap:
+    ssid: "pec"
+
+captive_portal:
+ota:
+
+web_server:
+  port: 80
+
+globals:
+  - id: nastavi_pec
+    type: bool
+    restore_value: no
+    initial_value: "false"
+  - id: temperatura_pec
+    type: unsigned int
+    restore_value: yes
+    initial_value: "60"
+  - id: nastavi_histereza
+    type: bool
+    restore_value: no
+    initial_value: "false"
+  - id: histereza
+    type: float
+    restore_value: yes
+    initial_value: "0.5"
+  - id: nastavi_bojler
+    type: bool
+    restore_value: no
+    initial_value: "false"
+  - id: temperatura_bojler
+    type: unsigned int
+    restore_value: yes
+    initial_value: "60"
+  - id: on_pec
+    type: bool
+    restore_value: no
+    initial_value: "false"
+  - id: on_bojler
+    type: bool
+    restore_value: no
+    initial_value: "false"
+  - id: on_histereza
+    type: bool
+    restore_value: no
+    initial_value: "false"
+  - id: nastavi
+    type: bool
+    restore_value: no
+    initial_value: "false"
+  - id: alert_sent
+    type: bool
+    restore_value: no
+    initial_value: "false"
+  - id: stanje
+    restore_value: no
+    type: int
+
+time:
+  - platform: sntp
+    id: esptime
+
+dallas:
+- id: "pec_hub"
+  pin: GPIO21
+  update_interval: 10s
+- id: "bojler_hub"
+  pin: GPIO22
+  update_interval: 10s
+
+switch:
+  - platform: gpio
+    pin: GPIO4
+    name: "Zaslon"
+    id: backlight
+    restore_mode: ALWAYS_ON
+  - platform: gpio
+    name: "Crpalka"
+    pin: GPIO17
+    id: pumpa
+    restore_mode: ALWAYS_OFF
+  - platform: restart
+    name: "Restart"
