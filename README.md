@@ -1,6 +1,13 @@
+
+
 # esphome-differential-thermostat
 
 A thermostat like device used for solar or wood chip based furnace to control your water boiler heating.
+
+
+https://user-images.githubusercontent.com/239513/118264592-328cc300-b4b8-11eb-9569-4f7fbfbd5a66.mp4
+
+
 
 Features:
 
