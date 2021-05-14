@@ -32,18 +32,27 @@ script:
           }else{
             // grej ce je pec dovolj topla
             if (id(tpec).get_temp_c() > id(temperatura_pec)){
-              // ce je pec na splosno bolj topla od bojlerja
+
+              // ce je pec na realno bolj topla od bojlerja
               if (id(tpec).get_temp_c() > id(tbojler).get_temp_c()){
-                // ce je bojler hladnejsi od nastavljene temeprature
+
+                // ce je bojler hladnejsi od nastavljene temperature - histereze
                 if (id(tbojler).get_temp_c() < id(temperatura_bojler) - id(histereza)){
                   id(pumpa).turn_on();
                   ESP_LOGI("termostat", "Vkljucujem crpalko, bojler hladnejsi od peci");
                 }
+
+                // od
+                // obmocje vrednosti histereze
+                // do
+
+                // ce je bojler toplejsi od nastavljene temperature + histereze
                 if (id(tbojler).get_temp_c() > id(temperatura_bojler) + id(histereza)){
                   id(stanje) = 3;
                   id(pumpa).turn_off();
                   ESP_LOGI("termostat", "Izklucujem crpalko, temperatura dosezena");
                 }
+
               }else{
                 id(stanje) = 2;
                 id(pumpa).turn_off();
