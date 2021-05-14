@@ -15,3 +15,9 @@ Hardware:
 - Relay Shield
 - Rotary Encoder
 - Power Source
+
+![image](https://user-images.githubusercontent.com/239513/118263658-dd9c7d00-b4b6-11eb-9393-df65807dc8f3.png)
+![image](https://user-images.githubusercontent.com/239513/118263664-e1300400-b4b6-11eb-81c1-fe54a82d44e1.png)
+![image](https://user-images.githubusercontent.com/239513/118263694-e725e500-b4b6-11eb-9fd5-e537e08963b2.png)
+![image](https://user-images.githubusercontent.com/239513/118263711-eb520280-b4b6-11eb-81a5-0e9a0e2585ef.png)
+![image](https://user-images.githubusercontent.com/239513/118263727-ee4cf300-b4b6-11eb-90a8-f88e87c35372.png)
