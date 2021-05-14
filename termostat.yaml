@@ -1,0 +1,57 @@
+esphome:
+  name: termostat
+  platform: ESP32
+  board: featheresp32
+  platformio_options:
+      board_build.f_cpu: 240000000L
+
+<<: !include display.yaml
+<<: !include common.yaml
+<<: !include sensor.yaml
+
+interval:
+  - interval: 5s
+    then:
+      - script.execute: check_mode
+  - interval: 1h
+    then:
+      - script.execute: clear_alerts
+script:
+  - id: clear_alerts
+    then:
+      - lambda: |-
+          id(alert_sent) = false;
+  - id: check_mode
+    then:
+      - lambda: |-
+          // nevarno
+          if (id(tpec).get_temp_c() >= 90){
+            id(stanje) = 666;
+            id(pumpa).turn_off();
+            ESP_LOGI("termostat", "Prevroce");
+          }else{
+            // grej ce je pec dovolj topla
+            if (id(tpec).get_temp_c() > id(temperatura_pec)){
+              // ce je pec na splosno bolj topla od bojlerja
+              if (id(tpec).get_temp_c() > id(tbojler).get_temp_c()){
+                // ce je bojler hladnejsi od nastavljene temeprature
+                if (id(tbojler).get_temp_c() < id(temperatura_bojler) - id(histereza)){
+                  id(pumpa).turn_on();
+                  ESP_LOGI("termostat", "Vkljucujem crpalko, bojler hladnejsi od peci");
+                }
+                if (id(tbojler).get_temp_c() > id(temperatura_bojler) + id(histereza)){
+                  id(stanje) = 3;
+                  id(pumpa).turn_off();
+                  ESP_LOGI("termostat", "Izklucujem crpalko, temperatura dosezena");
+                }
+              }else{
+                id(stanje) = 2;
+                id(pumpa).turn_off();
+                ESP_LOGI("termostat", "Izklucujem crpalko, pec hladnejsa od bojlerja");
+              }
+            }else{
+              id(stanje) = 1;
+              id(pumpa).turn_off();
+              ESP_LOGI("termostat", "Izklucujem crpalko, pec hladnejsa od nastavitve");
+            }
+          }
